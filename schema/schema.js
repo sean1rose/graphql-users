@@ -1,0 +1,1 @@
+// tells graphql what our data looks like, what properties each obj has, and how each obj is related to each other
