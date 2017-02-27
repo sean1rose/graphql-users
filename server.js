@@ -4,12 +4,16 @@ const express = require('express');
 // pull in express-graphql glue layer
 const expressGraphQL = require('express-graphql');
 
+// import graphql schema
+const schema = require('./schema/schema');
+
 // create express app
 const app = express();
 
 // graphql middleware
   // schema tells our server what our data is and its r/s's
 app.use('/graphql', expressGraphQL({
+  schema,
   graphiql: true
 }));
 

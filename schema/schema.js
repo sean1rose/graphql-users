@@ -5,7 +5,8 @@ const _ = require('lodash');
 const {
   GraphQLObjectType,
   GraphQLString,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLSchema
 } = graphql;
 
 // hardcoded datastore...
@@ -47,4 +48,8 @@ const RootQuery = new GraphQLObjectType({
       }
     }
   }
-})
+});
+
+module.exports = new GraphQLSchema({
+  query: RootQuery
+});
