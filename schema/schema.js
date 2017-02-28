@@ -1,19 +1,13 @@
 // SCHEMA tells graphql exactly what our data looks like, what properties each obj has, and how each obj is related to each other
 
 const graphql = require('graphql');
-const _ = require('lodash');
+const axios = require('axios');
 const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
   GraphQLSchema
 } = graphql;
-
-// hardcoded datastore...
-const users = [
-  { id: '23', firstName: 'Bill', age: 20 },
-  { id: '47', firstName: 'Samantha', age: 21}
-]
 
 // represents User obj, and what the obj will look like -> defines data and r/s's
   // fields prop: tells graphql about all the diff props a user has
@@ -23,7 +17,7 @@ const UserType = new GraphQLObjectType({
   name: 'User',
   fields: {
     id: { type: GraphQLString },
-    firstname: { type: GraphQLString },
+    firstName: { type: GraphQLString },
     age: { type: GraphQLInt }
   }
 });
@@ -41,10 +35,16 @@ const RootQuery = new GraphQLObjectType({
       type: UserType,
       args: { id: { type: GraphQLString }},
       resolve(parentValue, args) {
-        // want to return a particular user w/ a given id
-        // using hardcoded list...
-        // walking thru list of users and find and return 1st user w/ id === args.id
-        return _.find(users, { id: args.id });
+        // want to return data that represents the user obj w/ a given id (return raw JS)
+        
+        // async request to json server
+        // if return promise -> graphql will detect and wait for it to resolve, grab data resolved from db and send back to user
+          // request to localhost:3000/users/:id
+        // reaching out to 3rd party service
+        // since resolvve can handle a promise, can fetch data from anywhere (3rd party server, hard drive, API, etc)...
+        return axios.get(`http://localhost:3000/users/${args.id}`)
+          .then(resp => resp.data);
+
       }
     }
   }
