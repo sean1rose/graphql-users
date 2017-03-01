@@ -9,6 +9,18 @@ const {
   GraphQLSchema
 } = graphql;
 
+// make sure this is declared b4 UserType
+  // associate CompanyType w/ a User
+    // add as a FIELD on UserType below
+const CompanyType = new GraphQLObjectType({
+  name: 'Company',
+  fields: {
+    id: { type: GraphQLString },
+    name: { type: GraphQLString},
+    description: { type: GraphQLString}
+  }
+});
+
 // represents User obj, and what the obj will look like -> defines data and r/s's
   // fields prop: tells graphql about all the diff props a user has
   // tell graphql the type of data (number, string, array) each field is 
@@ -18,9 +30,13 @@ const UserType = new GraphQLObjectType({
   fields: {
     id: { type: GraphQLString },
     firstName: { type: GraphQLString },
-    age: { type: GraphQLInt }
+    age: { type: GraphQLInt },
+    company: {
+      type: CompanyType
+    }
   }
 });
+// note that company's type is 'CompanyType'
 
 // entry pt into our data, allows graphql to jump and land onto a specific node in our data -> points us to a particular record in our graph of data
   // our root query is expecting an ID
