@@ -32,7 +32,19 @@ const UserType = new GraphQLObjectType({
     firstName: { type: GraphQLString },
     age: { type: GraphQLInt },
     company: {
-      type: CompanyType
+      type: CompanyType,
+      resolve(parentValue, args) {
+        // tell server WHERE and HOW to fetch the data for each data type - each has a clear responsibility for fetching items of just 1 type
+        // https://dev-blog.apollodata.com/graphql-explained-5844742f195e#.mpsjqan8l
+        // schema tells server what queries clients can make and how they're related
+          // resolve tells server WHERE the data for each type COMES FROM
+            // answer: "How do I get data for Users/Companies?"
+        // somehow want to return the company associated w/ the given user from this resolve function
+        // console.log(parentValue, args);
+        return axios.get(`http://localhost:3000/companies/${parentValue.companyId}`)
+          .then(res => res.data);
+
+      }
     }
   }
 });
