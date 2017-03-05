@@ -6,7 +6,8 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
-  GraphQLSchema
+  GraphQLSchema,
+  GraphQLList
 } = graphql;
 
 // make sure this is declared b4 UserType
@@ -14,11 +15,19 @@ const {
     // add as a FIELD on UserType below
 const CompanyType = new GraphQLObjectType({
   name: 'Company',
-  fields: {
+  fields: () =>  ({
     id: { type: GraphQLString },
     name: { type: GraphQLString},
-    description: { type: GraphQLString}
-  }
+    description: { type: GraphQLString},
+    users: {
+      type: new GraphQLList(UserType),
+      resolve(parentValue, args) {
+        // make request to JSON server API to get reference to current company (via parentValue)
+        return axios.get(`http://localhost:3000/companies/${parentValue.id}/users`)
+          .then(res => res.data);
+      }
+    }
+  })
 });
 
 // represents User obj, and what the obj will look like -> defines data and r/s's
@@ -27,7 +36,7 @@ const CompanyType = new GraphQLObjectType({
   // every user has 3 properties...
 const UserType = new GraphQLObjectType({
   name: 'User',
-  fields: {
+  fields: () =>  ({
     id: { type: GraphQLString },
     firstName: { type: GraphQLString },
     age: { type: GraphQLInt },
@@ -43,10 +52,10 @@ const UserType = new GraphQLObjectType({
         // console.log(parentValue, args);
         return axios.get(`http://localhost:3000/companies/${parentValue.companyId}`)
           .then(res => res.data);
-
+          
       }
     }
-  }
+  })
 });
 // note that company's type is 'CompanyType'
 
@@ -73,6 +82,15 @@ const RootQuery = new GraphQLObjectType({
         return axios.get(`http://localhost:3000/users/${args.id}`)
           .then(resp => resp.data);
 
+      }
+    },
+    company: {
+      type: CompanyType,
+      args: { id: { type: GraphQLString }},
+      resolve(parentValue, args) {
+        // go out and find particular company and return it...
+        return axios.get(`http://localhost:3000/companies/${args.id}`)
+          .then(res => res.data);
       }
     }
   }
