@@ -11,6 +11,7 @@ const {
 } = graphql;
 
 // make sure this is declared b4 UserType
+
   // associate CompanyType w/ a User
     // add as a FIELD on UserType below
 const CompanyType = new GraphQLObjectType({
@@ -78,7 +79,7 @@ const RootQuery = new GraphQLObjectType({
         // if return promise -> graphql will detect and wait for it to resolve, grab data resolved from db and send back to user
           // request to localhost:3000/users/:id
         // reaching out to 3rd party service
-        // since resolvve can handle a promise, can fetch data from anywhere (3rd party server, hard drive, API, etc)...
+        // since resolve can handle a promise, can fetch data from anywhere (3rd party server, hard drive, API, etc)...
         return axios.get(`http://localhost:3000/users/${args.id}`)
           .then(resp => resp.data);
 
@@ -94,6 +95,23 @@ const RootQuery = new GraphQLObjectType({
       }
     }
   }
+});
+
+const mutation = new GraphQLObjectType({
+  name: 'Mutation',
+    fields: {
+  		addUser: {
+  			type: UserType,
+				args: {
+  				firstName: { type: GraphQLString },
+					age: { type: GraphQLInt },
+					companyId: { type: GraphQLString }
+				},
+				resolve() {
+
+				}
+			}
+    }
 });
 
 module.exports = new GraphQLSchema({
